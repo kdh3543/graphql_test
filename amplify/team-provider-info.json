@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-restapitest-dev-151913-authRole",
+      "UnauthRoleArn": "arn:aws:iam::451320390635:role/amplify-restapitest-dev-151913-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::451320390635:role/amplify-restapitest-dev-151913-authRole",
+      "Region": "ap-northeast-2",
+      "DeploymentBucketName": "amplify-restapitest-dev-151913-deployment",
+      "UnauthRoleName": "amplify-restapitest-dev-151913-unauthRole",
+      "StackName": "amplify-restapitest-dev-151913",
+      "StackId": "arn:aws:cloudformation:ap-northeast-2:451320390635:stack/amplify-restapitest-dev-151913/ccc7ca90-ca0b-11ed-8e96-06c52e69d954",
+      "AmplifyAppId": "dw0ph8hmz0gvk"
+    },
+    "categories": {
+      "api": {
+        "restapitest": {}
+      }
+    }
+  }
+}
