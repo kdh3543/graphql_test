@@ -1,16 +1,18 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import axios from "axios";
 import { API, graphqlOperation } from "aws-amplify";
 import { listPosts } from "../graphql/queries";
 import { createPost } from "../graphql/mutations";
 import styles from "../../styles/Home.module.css";
 import { onCreatePost } from "../graphql/subscriptions";
+import * as mutations from "../graphql/mutations";
+import { DeletePostInput } from "../API";
 
 const Home: NextPage = () => {
   const [formData, setFormData] = useState({
-    id: 0,
+    index: 0,
     title: "",
     content: "",
   });
@@ -19,8 +21,7 @@ const Home: NextPage = () => {
     const {
       target: { name, value },
     } = event;
-    console.log(name, value);
-    setFormData((prev) => ({ ...prev, [name]: value, id: 1 }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
   const callPosts = async () => {
     const request = await API.graphql(graphqlOperation(listPosts));
@@ -34,15 +35,31 @@ const Home: NextPage = () => {
   const realTimePosts = () => {
     API.graphql(graphqlOperation(onCreatePost)).subscribe({
       next: ({ value: { data } }: any) =>
-        setPosts((prev: any) => [{ ...data.onCreatePost }, ...prev]),
+        setPosts((prev: any) => [
+          { ...data.onCreatePost, index: posts.length },
+          ...prev,
+        ]),
+    });
+  };
+
+  const deletePosts = async (id: any) => {
+    console.log(id);
+    const deleteId: DeletePostInput = {
+      id,
+    };
+    const result = await API.graphql({
+      query: mutations.deletePost,
+      variables: { input: deleteId },
     });
   };
   useEffect(() => {
     callPosts();
+    realTimePosts();
   }, []);
-  useEffect(() => {
-    console.log(posts);
-  }, [posts]);
+  // useEffect(() => {
+  //   realTimePosts();
+  // }, []);
+
   return (
     <div>
       <Head>
@@ -78,14 +95,23 @@ const Home: NextPage = () => {
         <section>
           <h3>Timeline</h3>
           <div>
-            {posts.map((item: any) => (
-              <article key={item.id}>
-                <div className={styles.box}>
-                  <h4>{item.title}</h4>
-                  <h5>{item.content}</h5>
-                </div>
-              </article>
-            ))}
+            {posts
+              .sort(
+                (a: any, b: any) =>
+                  new Date(b.createdAt).getTime() -
+                  new Date(a.createdAt).getTime()
+              )
+              .map((item: any) => (
+                <article key={item.id}>
+                  <div className={styles.box}>
+                    <h3>{item.index}</h3>
+                    <h4>{item.title}</h4>
+                    <h5>{item.content}</h5>
+                    <h5>{item.createdAt}</h5>
+                    <button onClick={() => deletePosts(item.id)}>Delete</button>
+                  </div>
+                </article>
+              ))}
           </div>
         </section>
       </main>
