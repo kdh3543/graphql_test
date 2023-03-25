@@ -1,61 +1,84 @@
-import type { NextPage } from "next";
-import Head from "next/head";
-import { use, useEffect, useState } from "react";
-import axios from "axios";
-import { API, graphqlOperation } from "aws-amplify";
-import { listPosts } from "../graphql/queries";
-import { createPost } from "../graphql/mutations";
-import styles from "../../styles/Home.module.css";
-import { onCreatePost } from "../graphql/subscriptions";
-import * as mutations from "../graphql/mutations";
-import { DeletePostInput } from "../API";
+import type { NextPage } from 'next'
+import Head from 'next/head'
+import { use, useEffect, useState } from 'react'
+import axios from 'axios'
+import { API, graphqlOperation } from 'aws-amplify'
+import { listPosts } from '../graphql/queries'
+import { createPost } from '../graphql/mutations'
+import styles from '../../styles/Home.module.css'
+import { onCreatePost } from '../graphql/subscriptions'
+import * as mutations from '../graphql/mutations'
+import { DeletePostInput, UpdatePostInput, UpdatePostMutation } from '../API'
 
 const Home: NextPage = () => {
   const [formData, setFormData] = useState({
-    index: 0,
-    title: "",
-    content: "",
-  });
-  const [posts, setPosts] = useState<any>([]);
+    title: '',
+    content: '',
+  })
+  const [updateData, setUpdateData] = useState({
+    title: '',
+    content: '',
+  })
+  const [posts, setPosts] = useState<any>([])
+
   const onChange = (event: any) => {
     const {
       target: { name, value },
-    } = event;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-  const callPosts = async () => {
-    const request = await API.graphql(graphqlOperation(listPosts));
-    setPosts(request.data.listPosts.items);
-  };
+    } = event
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const getPosts = async () => {
+    const request = await API.graphql(graphqlOperation(listPosts))
+    setPosts(request.data.listPosts.items)
+  }
+
   const onSubmit = async (event: any) => {
-    event.preventDefault();
-    await API.graphql(graphqlOperation(createPost, { input: formData }));
-  };
+    event.preventDefault()
+    await API.graphql(graphqlOperation(createPost, { input: formData }))
+  }
 
   const realTimePosts = () => {
     API.graphql(graphqlOperation(onCreatePost)).subscribe({
       next: ({ value: { data } }: any) =>
-        setPosts((prev: any) => [
-          { ...data.onCreatePost, index: posts.length },
-          ...prev,
-        ]),
-    });
-  };
+        setPosts((prev: any) => [{ ...data.onCreatePost }, ...prev]),
+    })
+  }
 
   const deletePosts = async (id: any) => {
-    console.log(id);
+    console.log(id)
     const deleteId: DeletePostInput = {
       id,
-    };
-    const result = await API.graphql({
+    }
+    await API.graphql({
       query: mutations.deletePost,
       variables: { input: deleteId },
-    });
-  };
+    })
+  }
+
+  const onUpdate = (event: any) => {
+    const {
+      target: { name, value },
+    } = event
+    setUpdateData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const updatePosts = async (id: string) => {
+    console.log(updateData)
+    const updateDetails: UpdatePostInput = {
+      id,
+      title: updateData.title,
+      content: updateData.content,
+    }
+    await API.graphql({
+      query: mutations.updatePost,
+      variables: { input: updateDetails },
+    })
+  }
   useEffect(() => {
-    callPosts();
-    realTimePosts();
-  }, []);
+    getPosts()
+    realTimePosts()
+  }, [])
   // useEffect(() => {
   //   realTimePosts();
   // }, []);
@@ -104,11 +127,28 @@ const Home: NextPage = () => {
               .map((item: any) => (
                 <article key={item.id}>
                   <div className={styles.box}>
-                    <h3>{item.index}</h3>
                     <h4>{item.title}</h4>
                     <h5>{item.content}</h5>
                     <h5>{item.createdAt}</h5>
                     <button onClick={() => deletePosts(item.id)}>Delete</button>
+                    <div className={styles.updateBox}>
+                      <h3>update</h3>
+                      <input
+                        onChange={(e) => onUpdate(e)}
+                        name="title"
+                        type="text"
+                        placeholder="title"
+                      />
+                      <input
+                        onChange={(e) => onUpdate(e)}
+                        name="content"
+                        type="text"
+                        placeholder="content"
+                      />
+                      <button onClick={() => updatePosts(item.id)}>
+                        Update
+                      </button>
+                    </div>
                   </div>
                 </article>
               ))}
@@ -116,7 +156,7 @@ const Home: NextPage = () => {
         </section>
       </main>
     </div>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home

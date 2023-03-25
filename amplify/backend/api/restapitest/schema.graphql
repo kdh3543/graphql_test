@@ -5,7 +5,6 @@ input AMPLIFY {
 } # FOR TESTING ONLY!
 type Post @model {
   id: ID!
-  index: Int!
   title: String!
   content: String!
 }

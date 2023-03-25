@@ -4,45 +4,17 @@
 
 export type CreatePostInput = {
   id?: string | null,
-  index: number,
   title: string,
   content: string,
 };
 
 export type ModelPostConditionInput = {
-  index?: ModelIntInput | null,
   title?: ModelStringInput | null,
   content?: ModelStringInput | null,
   and?: Array< ModelPostConditionInput | null > | null,
   or?: Array< ModelPostConditionInput | null > | null,
   not?: ModelPostConditionInput | null,
 };
-
-export type ModelIntInput = {
-  ne?: number | null,
-  eq?: number | null,
-  le?: number | null,
-  lt?: number | null,
-  ge?: number | null,
-  gt?: number | null,
-  between?: Array< number | null > | null,
-  attributeExists?: boolean | null,
-  attributeType?: ModelAttributeTypes | null,
-};
-
-export enum ModelAttributeTypes {
-  binary = "binary",
-  binarySet = "binarySet",
-  bool = "bool",
-  list = "list",
-  map = "map",
-  number = "number",
-  numberSet = "numberSet",
-  string = "string",
-  stringSet = "stringSet",
-  _null = "_null",
-}
-
 
 export type ModelStringInput = {
   ne?: string | null,
@@ -60,6 +32,20 @@ export type ModelStringInput = {
   size?: ModelSizeInput | null,
 };
 
+export enum ModelAttributeTypes {
+  binary = "binary",
+  binarySet = "binarySet",
+  bool = "bool",
+  list = "list",
+  map = "map",
+  number = "number",
+  numberSet = "numberSet",
+  string = "string",
+  stringSet = "stringSet",
+  _null = "_null",
+}
+
+
 export type ModelSizeInput = {
   ne?: number | null,
   eq?: number | null,
@@ -73,7 +59,6 @@ export type ModelSizeInput = {
 export type Post = {
   __typename: "Post",
   id: string,
-  index: number,
   title: string,
   content: string,
   createdAt: string,
@@ -82,7 +67,6 @@ export type Post = {
 
 export type UpdatePostInput = {
   id: string,
-  index?: number | null,
   title?: string | null,
   content?: string | null,
 };
@@ -93,7 +77,6 @@ export type DeletePostInput = {
 
 export type ModelPostFilterInput = {
   id?: ModelIDInput | null,
-  index?: ModelIntInput | null,
   title?: ModelStringInput | null,
   content?: ModelStringInput | null,
   and?: Array< ModelPostFilterInput | null > | null,
@@ -125,7 +108,6 @@ export type ModelPostConnection = {
 
 export type ModelSubscriptionPostFilterInput = {
   id?: ModelSubscriptionIDInput | null,
-  index?: ModelSubscriptionIntInput | null,
   title?: ModelSubscriptionStringInput | null,
   content?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionPostFilterInput | null > | null,
@@ -145,18 +127,6 @@ export type ModelSubscriptionIDInput = {
   beginsWith?: string | null,
   in?: Array< string | null > | null,
   notIn?: Array< string | null > | null,
-};
-
-export type ModelSubscriptionIntInput = {
-  ne?: number | null,
-  eq?: number | null,
-  le?: number | null,
-  lt?: number | null,
-  ge?: number | null,
-  gt?: number | null,
-  between?: Array< number | null > | null,
-  in?: Array< number | null > | null,
-  notIn?: Array< number | null > | null,
 };
 
 export type ModelSubscriptionStringInput = {
@@ -183,7 +153,6 @@ export type CreatePostMutation = {
   createPost?:  {
     __typename: "Post",
     id: string,
-    index: number,
     title: string,
     content: string,
     createdAt: string,
@@ -200,7 +169,6 @@ export type UpdatePostMutation = {
   updatePost?:  {
     __typename: "Post",
     id: string,
-    index: number,
     title: string,
     content: string,
     createdAt: string,
@@ -217,7 +185,6 @@ export type DeletePostMutation = {
   deletePost?:  {
     __typename: "Post",
     id: string,
-    index: number,
     title: string,
     content: string,
     createdAt: string,
@@ -233,7 +200,6 @@ export type GetPostQuery = {
   getPost?:  {
     __typename: "Post",
     id: string,
-    index: number,
     title: string,
     content: string,
     createdAt: string,
@@ -253,7 +219,6 @@ export type ListPostsQuery = {
     items:  Array< {
       __typename: "Post",
       id: string,
-      index: number,
       title: string,
       content: string,
       createdAt: string,
@@ -271,7 +236,6 @@ export type OnCreatePostSubscription = {
   onCreatePost?:  {
     __typename: "Post",
     id: string,
-    index: number,
     title: string,
     content: string,
     createdAt: string,
@@ -287,7 +251,6 @@ export type OnUpdatePostSubscription = {
   onUpdatePost?:  {
     __typename: "Post",
     id: string,
-    index: number,
     title: string,
     content: string,
     createdAt: string,
@@ -303,7 +266,6 @@ export type OnDeletePostSubscription = {
   onDeletePost?:  {
     __typename: "Post",
     id: string,
-    index: number,
     title: string,
     content: string,
     createdAt: string,
